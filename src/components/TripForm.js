@@ -4,23 +4,25 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
 
+const initialFormState = {
+  date: '',
+  truckId: '',
+  destination: '',
+  freightAmount: 0,
+  freightPerTon: 0,
+  loadingAmount: 0,
+  unloadingAmount: 0,
+  driverBeta: 0,
+  advanceAmount: 0
+};
+
 const TripForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const editingTrip = location.state;
 
   const [trucks, setTrucks] = useState([]);
-  const [formData, setFormData] = useState({
-    date: '',
-    truckId: '',
-    destination: '',
-    freightAmount: '',
-    freightPerTon: '',
-    loadingAmount: '',
-    unloadingAmount: '',
-    driverBeta: '',
-    advanceAmount: ''
-  });
+  const [formData, setFormData] = useState(initialFormState);
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -43,12 +45,12 @@ const TripForm = () => {
         date: editingTrip.date?.slice(0, 10),
         truckId: editingTrip.truck?._id || '',
         destination: editingTrip.destination || '',
-        freightAmount: editingTrip.freightAmount || '',
-        freightPerTon: editingTrip.freightPerTon || '',
-        loadingAmount: editingTrip.loadingAmount || '',
-        unloadingAmount: editingTrip.unloadingAmount || '',
-        driverBeta: editingTrip.driverBeta || '',
-        advanceAmount: editingTrip.advanceAmount || ''
+        freightAmount: editingTrip.freightAmount || 0,
+        freightPerTon: editingTrip.freightPerTon || 0,
+        loadingAmount: editingTrip.loadingAmount || 0,
+        unloadingAmount: editingTrip.unloadingAmount || 0,
+        driverBeta: editingTrip.driverBeta || 0,
+        advanceAmount: editingTrip.advanceAmount || 0
       });
     }
   }, [editingTrip]);
@@ -64,34 +66,25 @@ const TripForm = () => {
       'advanceAmount'
     ];
 
-    if (numericFields.includes(name)) {
-      const parsed = parseFloat(value);
-      if (isNaN(parsed) || parsed < 0) {
-        setMessage(`${name} must be a valid non-negative number`);
-        return;
-      }
+    const newValue = numericFields.includes(name) ? parseFloat(value) : value;
+
+    if (numericFields.includes(name) && (isNaN(newValue) || newValue < 0)) {
+      setMessage(`${name} must be a valid non-negative number`);
+      return;
     }
 
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: newValue }));
     setMessage('');
   };
 
-  const parseAmount = val => {
-    const parsed = parseFloat(val);
-    return isNaN(parsed) ? 0 : parsed;
-  };
-
   const calculateTotalExpense = () => {
-    const total =
-      parseAmount(formData.freightAmount) +
-      parseAmount(formData.loadingAmount) +
-      parseAmount(formData.unloadingAmount) +
-      parseAmount(formData.driverBeta);
+    const { freightAmount, loadingAmount, unloadingAmount, driverBeta } = formData;
+    const total = freightAmount + loadingAmount + unloadingAmount + driverBeta;
     return parseFloat(total.toFixed(2));
   };
 
   const calculateBalanceAmount = () => {
-    const balance = calculateTotalExpense() - parseAmount(formData.advanceAmount);
+    const balance = calculateTotalExpense() - formData.advanceAmount;
     return parseFloat(balance.toFixed(2));
   };
 
@@ -111,21 +104,12 @@ const TripForm = () => {
       } else {
         await axios.post(`${API_BASE_URL}/api/trips`, payload);
         setMessage('Trip added successfully!');
-        setFormData({
-          date: '',
-          truckId: '',
-          destination: '',
-          freightAmount: '',
-          freightPerTon: '',
-          loadingAmount: '',
-          unloadingAmount: '',
-          driverBeta: '',
-          advanceAmount: ''
-        });
+        setFormData(initialFormState);
       }
 
       setTimeout(() => navigate('/'), 1000);
     } catch (err) {
+      console.error('Submission error:', err);
       setMessage(err.response?.data?.message || 'Error saving trip');
     } finally {
       setIsSubmitting(false);
@@ -138,11 +122,11 @@ const TripForm = () => {
       <button className="btn" onClick={() => navigate('/')}>← Back to Trip List</button>
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Date:</label>
+          <label htmlFor="date">Date:</label>
           <input type="date" name="date" value={formData.date} onChange={handleChange} required />
         </div>
         <div>
-          <label>Truck:</label>
+          <label htmlFor="truckId">Truck:</label>
           <select name="truckId" value={formData.truckId} onChange={handleChange} required>
             <option value="">Select Truck</option>
             {trucks.map(truck => (
@@ -153,31 +137,31 @@ const TripForm = () => {
           </select>
         </div>
         <div>
-          <label>Destination:</label>
+          <label htmlFor="destination">Destination:</label>
           <input type="text" name="destination" value={formData.destination} onChange={handleChange} required />
         </div>
         <div>
-          <label>Total Freight Amount ₹:</label>
+          <label htmlFor="freightAmount">Total Freight Amount ₹:</label>
           <input type="number" name="freightAmount" value={formData.freightAmount} onChange={handleChange} min="0" step="0.01" />
         </div>
         <div>
-          <label>Freight per Ton ₹:</label>
+          <label htmlFor="freightPerTon">Freight per Ton ₹:</label>
           <input type="number" name="freightPerTon" value={formData.freightPerTon} onChange={handleChange} min="0" step="0.01" />
         </div>
         <div>
-          <label>Load labor amount ₹:</label>
+          <label htmlFor="loadingAmount">Load labor amount ₹:</label>
           <input type="number" name="loadingAmount" value={formData.loadingAmount} onChange={handleChange} min="0" step="0.01" />
         </div>
         <div>
-          <label>Unload labor amount ₹:</label>
+          <label htmlFor="unloadingAmount">Unload labor amount ₹:</label>
           <input type="number" name="unloadingAmount" value={formData.unloadingAmount} onChange={handleChange} min="0" step="0.01" />
         </div>
         <div>
-          <label>Driver Beta ₹:</label>
+          <label htmlFor="driverBeta">Driver Beta ₹:</label>
           <input type="number" name="driverBeta" value={formData.driverBeta} onChange={handleChange} min="0" step="0.01" />
         </div>
         <div>
-          <label>Advance amount ₹:</label>
+          <label htmlFor="advanceAmount">Advance amount ₹:</label>
           <input type="number" name="advanceAmount" value={formData.advanceAmount} onChange={handleChange} min="0" step="0.01" />
         </div>
         <button type="submit" disabled={isSubmitting}>
