@@ -81,14 +81,19 @@ const TripForm = () => {
     return isNaN(parsed) ? 0 : parsed;
   };
 
-  const calculateTotalExpense = () =>
-    parseAmount(formData.freightAmount) +
-    parseAmount(formData.loadingAmount) +
-    parseAmount(formData.unloadingAmount) +
-    parseAmount(formData.driverBeta);
+  const calculateTotalExpense = () => {
+    const total =
+      parseAmount(formData.freightAmount) +
+      parseAmount(formData.loadingAmount) +
+      parseAmount(formData.unloadingAmount) +
+      parseAmount(formData.driverBeta);
+    return parseFloat(total.toFixed(2));
+  };
 
-  const calculateBalanceAmount = () =>
-    calculateTotalExpense() - parseAmount(formData.advanceAmount);
+  const calculateBalanceAmount = () => {
+    const balance = calculateTotalExpense() - parseAmount(formData.advanceAmount);
+    return parseFloat(balance.toFixed(2));
+  };
 
   const handleSubmit = async e => {
     e.preventDefault();
