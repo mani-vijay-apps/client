@@ -64,16 +64,22 @@ const TripForm = () => {
       'advanceAmount'
     ];
 
-    if (numericFields.includes(name) && value !== '' && parseFloat(value) < 0) {
-      setMessage(`${name} cannot be negative`);
-      return;
+    if (numericFields.includes(name)) {
+      const parsed = parseFloat(value);
+      if (isNaN(parsed) || parsed < 0) {
+        setMessage(`${name} must be a valid non-negative number`);
+        return;
+      }
     }
 
     setFormData(prev => ({ ...prev, [name]: value }));
     setMessage('');
   };
 
-  const parseAmount = val => parseFloat(val) || 0;
+  const parseAmount = val => {
+    const parsed = parseFloat(val);
+    return isNaN(parsed) ? 0 : parsed;
+  };
 
   const calculateTotalExpense = () =>
     parseAmount(formData.freightAmount) +
@@ -147,37 +153,37 @@ const TripForm = () => {
         </div>
         <div>
           <label>Total Freight Amount ₹:</label>
-          <input type="number" name="freightAmount" value={formData.freightAmount} onChange={handleChange} min="0" />
+          <input type="number" name="freightAmount" value={formData.freightAmount} onChange={handleChange} min="0" step="0.01" />
         </div>
         <div>
           <label>Freight per Ton ₹:</label>
-          <input type="number" name="freightPerTon" value={formData.freightPerTon} onChange={handleChange} min="0" />
+          <input type="number" name="freightPerTon" value={formData.freightPerTon} onChange={handleChange} min="0" step="0.01" />
         </div>
         <div>
           <label>Load labor amount ₹:</label>
-          <input type="number" name="loadingAmount" value={formData.loadingAmount} onChange={handleChange} min="0" />
+          <input type="number" name="loadingAmount" value={formData.loadingAmount} onChange={handleChange} min="0" step="0.01" />
         </div>
         <div>
           <label>Unload labor amount ₹:</label>
-          <input type="number" name="unloadingAmount" value={formData.unloadingAmount} onChange={handleChange} min="0" />
+          <input type="number" name="unloadingAmount" value={formData.unloadingAmount} onChange={handleChange} min="0" step="0.01" />
         </div>
         <div>
           <label>Driver Beta ₹:</label>
-          <input type="number" name="driverBeta" value={formData.driverBeta} onChange={handleChange} min="0" />
+          <input type="number" name="driverBeta" value={formData.driverBeta} onChange={handleChange} min="0" step="0.01" />
         </div>
         <div>
           <label>Advance amount ₹:</label>
-          <input type="number" name="advanceAmount" value={formData.advanceAmount} onChange={handleChange} min="0" />
+          <input type="number" name="advanceAmount" value={formData.advanceAmount} onChange={handleChange} min="0" step="0.01" />
         </div>
         <button type="submit" disabled={isSubmitting}>
           {isSubmitting ? 'Saving...' : editingTrip ? 'Update Trip' : 'Add Trip'}
         </button>
       </form>
       <div>
-        <strong>Total Expense ₹:</strong> {calculateTotalExpense()}
+        <strong>Total Expense ₹:</strong> {calculateTotalExpense().toFixed(2)}
       </div>
       <div>
-        <strong>Balance Amount ₹:</strong> {calculateBalanceAmount()}
+        <strong>Balance Amount ₹:</strong> {calculateBalanceAmount().toFixed(2)}
       </div>
       {message && <p className="message">{message}</p>}
     </div>
