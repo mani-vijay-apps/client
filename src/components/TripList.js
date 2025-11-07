@@ -58,8 +58,7 @@ const TripList = () => {
       Unloading: trip.unloadingAmount,
       Beta: trip.driverBeta,
       Diesel: trip.dieselAmount,
-      Toll: trip.tollAmount,
-      Other: trip.otherExpense,
+      Fasttag: trip.fasttagAmount,
       TotalExpense: trip.totalExpense,
       Advance: trip.advanceAmount,
       Balance: trip.balanceAmount
@@ -135,8 +134,7 @@ const TripList = () => {
             <th>Unloading Amount ₹</th>
             <th>Driver Beta ₹</th>
             <th>Diesel ₹</th>
-            <th>Toll ₹</th>
-            <th>Other ₹</th>
+            <th>Fasttag ₹</th>
             <th>Total Expense ₹</th>
             <th>Advance Amount ₹</th>
             <th>Balance Amount ₹</th>
@@ -155,8 +153,7 @@ const TripList = () => {
               <td>{trip.unloadingAmount}</td>
               <td>{trip.driverBeta}</td>
               <td>{trip.dieselAmount}</td>
-              <td>{trip.tollAmount}</td>
-              <td>{trip.otherExpense}</td>
+              <td>{trip.fasttagAmount}</td>
               <td>{trip.totalExpense}</td>
               <td>{trip.advanceAmount}</td>
               <td>{trip.balanceAmount}</td>
