@@ -13,7 +13,10 @@ const initialFormState = {
   loadingAmount: 0,
   unloadingAmount: 0,
   driverBeta: 0,
-  advanceAmount: 0
+  advanceAmount: 0,
+  dieselAmount: 0,
+  oilAmount: 0,
+  fastTagAmount: 0
 };
 
 const TripForm = () => {
@@ -50,7 +53,10 @@ const TripForm = () => {
         loadingAmount: editingTrip.loadingAmount || 0,
         unloadingAmount: editingTrip.unloadingAmount || 0,
         driverBeta: editingTrip.driverBeta || 0,
-        advanceAmount: editingTrip.advanceAmount || 0
+        advanceAmount: editingTrip.advanceAmount || 0,
+        dieselAmount: editingTrip.dieselAmount || 0,
+        oilAmount: editingTrip.oilAmount || 0,
+        fastTagAmount: editingTrip.fastTagAmount || 0
       });
     }
   }, [editingTrip]);
@@ -63,7 +69,10 @@ const TripForm = () => {
       'loadingAmount',
       'unloadingAmount',
       'driverBeta',
-      'advanceAmount'
+      'advanceAmount',
+      'dieselAmount',
+      'oilAmount',
+      'fastTagAmount'
     ];
 
     const newValue = numericFields.includes(name) ? parseFloat(value) : value;
@@ -78,8 +87,16 @@ const TripForm = () => {
   };
 
   const calculateTotalExpense = () => {
-    const { freightAmount, loadingAmount, unloadingAmount, driverBeta } = formData;
-    const total = freightAmount + loadingAmount + unloadingAmount + driverBeta;
+    const {
+      freightAmount,
+      loadingAmount,
+      unloadingAmount,
+      driverBeta,
+      dieselAmount,
+      oilAmount,
+      fastTagAmount
+    } = formData;
+    const total = freightAmount + loadingAmount + unloadingAmount + driverBeta + dieselAmount + oilAmount + fastTagAmount;
     return parseFloat(total.toFixed(2));
   };
 
@@ -159,6 +176,18 @@ const TripForm = () => {
         <div>
           <label htmlFor="driverBeta">Driver Beta ₹:</label>
           <input type="number" name="driverBeta" value={formData.driverBeta} onChange={handleChange} min="0" step="0.01" />
+        </div>
+        <div>
+          <label htmlFor="dieselAmount">Diesel Amount ₹:</label>
+          <input type="number" name="dieselAmount" value={formData.dieselAmount} onChange={handleChange} min="0" step="0.01" />
+        </div>
+        <div>
+          <label htmlFor="oilAmount">Oil Amount ₹:</label>
+          <input type="number" name="oilAmount" value={formData.oilAmount} onChange={handleChange} min="0" step="0.01" />
+        </div>
+        <div>
+          <label htmlFor="fastTagAmount">Fast Tag Amount ₹:</label>
+          <input type="number" name="fastTagAmount" value={formData.fastTagAmount} onChange={handleChange} min="0" step="0.01" />
         </div>
         <div>
           <label htmlFor="advanceAmount">Advance amount ₹:</label>
