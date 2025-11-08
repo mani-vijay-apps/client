@@ -44,8 +44,7 @@ const TruckForm = () => {
 
   return (
     <div className="container">
-      <h2>{editingTruck ? 'Edit Truck' : 'Add Truck'}</h2>
-      <button className="btn" onClick={() => navigate('/')}>← Back to Trip List</button>
+      <h1>{editingTruck ? 'Edit Truck' : 'Add Truck'}</h1>
       <form onSubmit={handleSubmit}>
         <div>
           <label>Vehicle Number:</label>

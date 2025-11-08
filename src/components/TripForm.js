@@ -140,8 +140,7 @@ const TripForm = () => {
 
   return (
     <div className="container">
-      <h2>{editingTrip ? 'Update Trip' : 'Add Trip'}</h2>
-      <button className="btn" onClick={() => navigate('/')}>← Back to Trip List</button>
+      <h1>{editingTrip ? 'Update Trip' : 'Add Trip'}</h1>
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="date">Date:</label>

@@ -94,7 +94,7 @@ const TripList = () => {
 
   return (
     <div className="container">
-      <h2>Trip Records</h2>
+      <h1>Trip Records</h1>
 
       <div className="filter-group">
         <div>
@@ -118,11 +118,12 @@ const TripList = () => {
         </div>
       </div>
 
-      <button className="export" onClick={exportToExcel} disabled={filteredTrips.length === 0}>
+      <button className="export btn-export" onClick={exportToExcel} disabled={filteredTrips.length === 0}>
         Export to Excel
       </button>
 
-      <table>
+      <div className='table-container'>
+        <table className='modern-table'>
         <thead>
           <tr>
             <th>Date</th>
@@ -158,13 +159,15 @@ const TripList = () => {
               <td>{trip.advanceAmount}</td>
               <td>{trip.balanceAmount}</td>
               <td>
-                <button onClick={() => handleEdit(trip)} className="btn">Update</button>
-                <button onClick={() => handleDelete(trip._id)} className="btn delete">Delete</button>
+                <button onClick={() => handleEdit(trip)} className="btn edit-btn">Edit</button>
+                <button onClick={() => handleDelete(trip._id)} className="btn delete-btn">Delete</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      </div>      
+      
     </div>
   );
 };
