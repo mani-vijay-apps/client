@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 const Header = () => (
   <header className="app-header">
     <h2>
-      <Link to="/" className="home-link">Company Name</Link>
+      <Link to="/" className="home-link">KSS</Link>
     </h2>
     <div className="button-group">
       <Link to="/trucks">
