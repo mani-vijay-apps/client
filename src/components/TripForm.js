@@ -201,7 +201,7 @@ const TripForm = () => {
           {isSubmitting ? 'Saving...' : editingTrip ? 'Update Trip' : 'Add Trip'}
         </button>
       </form>
-      <div>
+      <div className='flex-balance'>
         <strong>Balance Amount ₹:</strong> {calculateBalanceAmount().toFixed(2)}
       </div>
       {message && <p className="message">{message}</p>}
