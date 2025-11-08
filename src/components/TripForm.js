@@ -86,7 +86,7 @@ const TripForm = () => {
     setMessage('');
   };
 
-  const calculateTotalExpense = () => {
+  const calculateBalanceAmount = () => {
     const {
       freightAmount,
       loadingAmount,
@@ -94,14 +94,20 @@ const TripForm = () => {
       driverBeta,
       dieselAmount,
       oilAmount,
-      fastTagAmount
+      fastTagAmount,
+      advanceAmount
     } = formData;
-    const total = freightAmount + loadingAmount + unloadingAmount + driverBeta + dieselAmount + oilAmount + fastTagAmount;
-    return parseFloat(total.toFixed(2));
-  };
 
-  const calculateBalanceAmount = () => {
-    const balance = calculateTotalExpense() - formData.advanceAmount;
+    const expenses =
+      loadingAmount +
+      unloadingAmount +
+      driverBeta +
+      dieselAmount +
+      oilAmount +
+      fastTagAmount +
+      advanceAmount;
+
+    const balance = freightAmount - expenses;
     return parseFloat(balance.toFixed(2));
   };
 
@@ -111,7 +117,6 @@ const TripForm = () => {
     try {
       const payload = {
         ...formData,
-        totalExpense: calculateTotalExpense(),
         balanceAmount: calculateBalanceAmount()
       };
 
@@ -197,9 +202,6 @@ const TripForm = () => {
           {isSubmitting ? 'Saving...' : editingTrip ? 'Update Trip' : 'Add Trip'}
         </button>
       </form>
-      <div>
-        <strong>Total Expense ₹:</strong> {calculateTotalExpense().toFixed(2)}
-      </div>
       <div>
         <strong>Balance Amount ₹:</strong> {calculateBalanceAmount().toFixed(2)}
       </div>

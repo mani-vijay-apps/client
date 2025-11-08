@@ -60,7 +60,6 @@ const TripList = () => {
       Diesel: trip.dieselAmount,
       Oil: trip.oilAmount,
       FastTag: trip.fastTagAmount,
-      TotalExpense: trip.totalExpense,
       Advance: trip.advanceAmount,
       Balance: trip.balanceAmount
     }));
@@ -137,7 +136,6 @@ const TripList = () => {
             <th>Diesel ₹</th>
             <th>Oil ₹</th>
             <th>FastTag ₹</th>
-            <th>Total Expense ₹</th>
             <th>Advance Amount ₹</th>
             <th>Balance Amount ₹</th>
             <th>Actions</th>
@@ -157,7 +155,6 @@ const TripList = () => {
               <td>{trip.dieselAmount}</td>
               <td>{trip.oilAmount}</td>
               <td>{trip.fastTagAmount}</td>
-              <td>{trip.totalExpense}</td>
               <td>{trip.advanceAmount}</td>
               <td>{trip.balanceAmount}</td>
               <td>

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import TripForm from './components/TripForm';
 import TruckForm from './components/TruckForm';
 import TripList from './components/TripList';
+import TruckList from './components/TruckList';
 import './App.css';
 
 function App() {
@@ -20,7 +21,7 @@ function App() {
 const HomePage = () => (
   <div className="container">
     <header className="app-header">
-      <h1>Trip Records</h1>
+      <h1>Trip & Truck Records</h1>
       <div className="button-group">
         <Link to="/add-trip">
           <button className="btn">+ Add Trip</button>
@@ -30,7 +31,16 @@ const HomePage = () => (
         </Link>
       </div>
     </header>
-    <TripList />
+
+    <section className="record-section">
+      <h2>Trip List</h2>
+      <TripList />
+    </section>
+
+    <section className="record-section">
+      <h2>Truck List</h2>
+      <TruckList />
+    </section>
   </div>
 );
 
