@@ -11,6 +11,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/trucks" element={<TruckList />} />
         <Route path="/add-trip" element={<TripForm />} />
         <Route path="/add-truck" element={<TruckForm />} />
       </Routes>
@@ -21,8 +22,11 @@ function App() {
 const HomePage = () => (
   <div className="container">
     <header className="app-header">
-      <h1>Trip & Truck Records</h1>
+      <h1>Trip Records</h1>
       <div className="button-group">
+        <Link to="/trucks">
+          <button className="btn">Truck Records</button>
+        </Link>
         <Link to="/add-trip">
           <button className="btn">+ Add Trip</button>
         </Link>
@@ -37,10 +41,6 @@ const HomePage = () => (
       <TripList />
     </section>
 
-    <section className="record-section">
-      <h2>Truck List</h2>
-      <TruckList />
-    </section>
   </div>
 );
 
