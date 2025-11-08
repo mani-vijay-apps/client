@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
+
 const TruckList = () => {
   const [trucks, setTrucks] = useState([]);
   const navigate = useNavigate();
@@ -12,7 +14,7 @@ const TruckList = () => {
 
   const fetchTrucks = async () => {
     try {
-      const response = await axios.get('/api/trucks');
+      const response = await axios.get(`${API_BASE_URL}/api/trucks`);
       setTrucks(response.data);
     } catch (error) {
       console.error('Error fetching trucks:', error);
@@ -22,7 +24,7 @@ const TruckList = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this truck?')) {
       try {
-        await axios.delete(`/api/trucks/${id}`);
+        await axios.delete(`${API_BASE_URL}/api/trucks/${id}`);
         setTrucks(trucks.filter(truck => truck._id !== id));
       } catch (error) {
         console.error('Error deleting truck:', error);
@@ -37,6 +39,7 @@ const TruckList = () => {
   return (
     <div className="truck-list-container">
       <h2>Truck List</h2>
+      <button className="btn" onClick={() => navigate('/add-truck')}>+ Add New Truck</button>
       {trucks.length === 0 ? (
         <p>No trucks found.</p>
       ) : (
