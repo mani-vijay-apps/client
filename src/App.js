@@ -25,7 +25,6 @@ function App() {
 
 const HomePage = () => (
   <section className="record-section">
-    <h2>Trip List</h2>
     <TripList />
   </section>
 );

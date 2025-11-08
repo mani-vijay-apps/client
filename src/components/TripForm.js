@@ -139,7 +139,7 @@ const TripForm = () => {
   };
 
   return (
-    <div className="container">
+    <div className="trip-form-container">
       <h1>{editingTrip ? 'Update Trip' : 'Add Trip'}</h1>
       <form onSubmit={handleSubmit}>
         <div>

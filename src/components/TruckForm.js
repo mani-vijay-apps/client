@@ -43,7 +43,7 @@ const TruckForm = () => {
   };
 
   return (
-    <div className="container">
+    <div className="truck-form-container">
       <h1>{editingTruck ? 'Edit Truck' : 'Add Truck'}</h1>
       <form onSubmit={handleSubmit}>
         <div>

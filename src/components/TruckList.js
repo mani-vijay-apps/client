@@ -39,7 +39,6 @@ const TruckList = () => {
   return (
     <div className="truck-list-container">
       <h1>Truck List</h1>
-      <button className="btn" onClick={() => navigate('/add-truck')}>+ Add New Truck</button>
       {trucks.length === 0 ? (
         <p>No trucks found.</p>
       ) : (

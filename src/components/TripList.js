@@ -93,7 +93,7 @@ const TripList = () => {
   if (error) return <div className="container"><p>{error}</p></div>;
 
   return (
-    <div className="container">
+    <div className="trips-container">
       <h1>Trip Records</h1>
 
       <div className="filter-group">
