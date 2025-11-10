@@ -8,15 +8,16 @@ const initialFormState = {
   date: '',
   truckId: '',
   destination: '',
-  freightAmount: 0,
-  freightPerTon: 0,
-  loadingAmount: 0,
-  unloadingAmount: 0,
-  driverBeta: 0,
-  advanceAmount: 0,
-  dieselAmount: 0,
-  oilAmount: 0,
-  fastTagAmount: 0
+  freightAmount: '',
+  freightPerTon: '',
+  loadingAmount: '',
+  unloadingAmount: '',
+  driverBeta: '',
+  advanceAmount: '',
+  dieselAmount: '',
+  oilAmount: '',
+  fastTagAmount: '',
+  taxAmount: ''
 };
 
 const TripForm = () => {
@@ -45,18 +46,19 @@ const TripForm = () => {
   useEffect(() => {
     if (editingTrip) {
       setFormData({
-        date: editingTrip.date?.slice(0, 10),
+        date: editingTrip.date?.slice(0, 10) || '',
         truckId: editingTrip.truck?._id || '',
         destination: editingTrip.destination || '',
-        freightAmount: editingTrip.freightAmount || 0,
-        freightPerTon: editingTrip.freightPerTon || 0,
-        loadingAmount: editingTrip.loadingAmount || 0,
-        unloadingAmount: editingTrip.unloadingAmount || 0,
-        driverBeta: editingTrip.driverBeta || 0,
-        advanceAmount: editingTrip.advanceAmount || 0,
-        dieselAmount: editingTrip.dieselAmount || 0,
-        oilAmount: editingTrip.oilAmount || 0,
-        fastTagAmount: editingTrip.fastTagAmount || 0
+        freightAmount: editingTrip.freightAmount?.toString() || '',
+        freightPerTon: editingTrip.freightPerTon?.toString() || '',
+        loadingAmount: editingTrip.loadingAmount?.toString() || '',
+        unloadingAmount: editingTrip.unloadingAmount?.toString() || '',
+        driverBeta: editingTrip.driverBeta?.toString() || '',
+        advanceAmount: editingTrip.advanceAmount?.toString() || '',
+        dieselAmount: editingTrip.dieselAmount?.toString() || '',
+        oilAmount: editingTrip.oilAmount?.toString() || '',
+        fastTagAmount: editingTrip.fastTagAmount?.toString() || '',
+        taxAmount: editingTrip.taxAmount?.toString() || ''
       });
     }
   }, [editingTrip]);
@@ -72,42 +74,41 @@ const TripForm = () => {
       'advanceAmount',
       'dieselAmount',
       'oilAmount',
-      'fastTagAmount'
+      'fastTagAmount',
+      'taxAmount'
     ];
 
-    const newValue = numericFields.includes(name) ? parseFloat(value) : value;
-
-    if (numericFields.includes(name) && (isNaN(newValue) || newValue < 0)) {
+    if (numericFields.includes(name) && value !== '' && (isNaN(parseFloat(value)) || parseFloat(value) < 0)) {
       setMessage(`${name} must be a valid non-negative number`);
       return;
     }
 
-    setFormData(prev => ({ ...prev, [name]: newValue }));
+    setFormData(prev => ({ ...prev, [name]: value }));
     setMessage('');
   };
 
   const calculateBalanceAmount = () => {
     const {
-      freightAmount,
       loadingAmount,
       unloadingAmount,
       driverBeta,
       dieselAmount,
       oilAmount,
       fastTagAmount,
+      taxAmount,
       advanceAmount
     } = formData;
 
-    const expenses =
-      loadingAmount +
-      unloadingAmount +
-      driverBeta +
-      dieselAmount +
-      oilAmount +
-      fastTagAmount +
-      advanceAmount;
+    const totalExpense =
+      parseFloat(loadingAmount || 0) +
+      parseFloat(unloadingAmount || 0) +
+      parseFloat(driverBeta || 0) +
+      parseFloat(dieselAmount || 0) +
+      parseFloat(oilAmount || 0) +
+      parseFloat(fastTagAmount || 0) +
+      parseFloat(taxAmount || 0);
 
-    const balance = freightAmount - expenses;
+    const balance = totalExpense - parseFloat(advanceAmount || 0);
     return parseFloat(balance.toFixed(2));
   };
 
@@ -159,43 +160,47 @@ const TripForm = () => {
         </div>
         <div>
           <label htmlFor="destination">Destination:</label>
-          <input type="text" name="destination" value={formData.destination} onChange={handleChange} required />
-        </div>
-        <div>
-          <label htmlFor="freightAmount">Total Freight Amount ₹:</label>
-          <input type="number" name="freightAmount" value={formData.freightAmount} onChange={handleChange} min="0" step="0.01" />
+          <input type="text" name="destination" value={formData.destination} onChange={handleChange} placeholder="Enter destination" required />
         </div>
         <div>
           <label htmlFor="freightPerTon">Freight per Ton ₹:</label>
-          <input type="number" name="freightPerTon" value={formData.freightPerTon} onChange={handleChange} min="0" step="0.01" />
+          <input type="number" name="freightPerTon" value={formData.freightPerTon} onChange={handleChange} placeholder="e.g. 500.00" min="0" />
+        </div>
+        <div>
+          <label htmlFor="freightAmount">Total Freight Amount ₹:</label>
+          <input type="number" name="freightAmount" value={formData.freightAmount} onChange={handleChange} placeholder="e.g. 10000.00" min="0" />
         </div>
         <div>
           <label htmlFor="loadingAmount">Load labor amount ₹:</label>
-          <input type="number" name="loadingAmount" value={formData.loadingAmount} onChange={handleChange} min="0" step="0.01" />
+          <input type="number" name="loadingAmount" value={formData.loadingAmount} onChange={handleChange} placeholder="e.g. 300.00" min="0" />
         </div>
         <div>
           <label htmlFor="unloadingAmount">Unload labor amount ₹:</label>
-          <input type="number" name="unloadingAmount" value={formData.unloadingAmount} onChange={handleChange} min="0" step="0.01" />
+          <input type="number" name="unloadingAmount" value={formData.unloadingAmount} onChange={handleChange} placeholder="e.g. 250.00" min="0" />
         </div>
         <div>
           <label htmlFor="driverBeta">Driver Beta ₹:</label>
-          <input type="number" name="driverBeta" value={formData.driverBeta} onChange={handleChange} min="0" step="0.01" />
+          <input type="number" name="driverBeta" value={formData.driverBeta} onChange={handleChange} placeholder="e.g. 500.00" min="0" />
         </div>
         <div>
           <label htmlFor="dieselAmount">Diesel Amount ₹:</label>
-          <input type="number" name="dieselAmount" value={formData.dieselAmount} onChange={handleChange} min="0" step="0.01" />
+          <input type="number" name="dieselAmount" value={formData.dieselAmount} onChange={handleChange} placeholder="e.g. 3000.00" min="0" />
         </div>
         <div>
           <label htmlFor="oilAmount">Oil Amount ₹:</label>
-          <input type="number" name="oilAmount" value={formData.oilAmount} onChange={handleChange} min="0" step="0.01" />
+          <input type="number" name="oilAmount" value={formData.oilAmount} onChange={handleChange} placeholder="e.g. 500.00" min="0" />
         </div>
         <div>
           <label htmlFor="fastTagAmount">Fast Tag Amount ₹:</label>
-          <input type="number" name="fastTagAmount" value={formData.fastTagAmount} onChange={handleChange} min="0" step="0.01" />
+          <input type="number" name="fastTagAmount" value={formData.fastTagAmount} onChange={handleChange} placeholder="e.g. 200.00" min="0" />
+        </div>
+        <div>
+          <label htmlFor="taxAmount">Tax Amount ₹:</label>
+          <input type="number" name="taxAmount" value={formData.taxAmount} onChange={handleChange} placeholder="e.g. 1000.00" min="0" />
         </div>
         <div>
           <label htmlFor="advanceAmount">Advance amount ₹:</label>
-          <input type="number" name="advanceAmount" value={formData.advanceAmount} onChange={handleChange} min="0" step="0.01" />
+          <input type="number" name="advanceAmount" value={formData.advanceAmount} onChange={handleChange} placeholder="e.g. 5000.00" min="0" />
         </div>
         <button type="submit" disabled={isSubmitting}>
           {isSubmitting ? 'Saving...' : editingTrip ? 'Update Trip' : 'Add Trip'}

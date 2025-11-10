@@ -17,22 +17,20 @@ const TripList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [tripRes, truckRes] = await Promise.all([
-          axios.get(`${API_BASE_URL}/api/trips`),
-          axios.get(`${API_BASE_URL}/api/trucks`)
-        ]);
-        setTrips(tripRes.data);
-        setTrucks(truckRes.data);
-      } catch (err) {
-        console.error('Error fetching data:', err);
-        setError('Failed to load data');
-      } finally {
+    axios.get(`${API_BASE_URL}/api/trips`)
+      .then(res => {
+        setTrips(res.data);
+        setLoading(false); // ✅ Trips loaded, stop showing "Loading..."
+      })
+      .catch(err => {
+        console.error('Error fetching trips:', err);
+        setError('Failed to load trips');
         setLoading(false);
-      }
-    };
-    fetchData();
+      });
+
+    axios.get(`${API_BASE_URL}/api/trucks`)
+      .then(res => setTrucks(res.data))
+      .catch(err => console.error('Error fetching trucks:', err));
   }, []);
 
   const filterTrips = () => {
@@ -48,21 +46,37 @@ const TripList = () => {
   };
 
   const exportToExcel = () => {
-    const data = filterTrips().map(trip => ({
-      Date: new Date(trip.date).toLocaleDateString(),
-      Truck: trip.truck?.vehicleNumber || '',
-      Destination: trip.destination,
-      'Freight per Ton': trip.freightPerTon,
-      Freight: trip.freightAmount,
-      Loading: trip.loadingAmount,
-      Unloading: trip.unloadingAmount,
-      Beta: trip.driverBeta,
-      Diesel: trip.dieselAmount,
-      Oil: trip.oilAmount,
-      FastTag: trip.fastTagAmount,
-      Advance: trip.advanceAmount,
-      Balance: trip.balanceAmount
-    }));
+    const data = filterTrips().map(trip => {
+      const totalExpense =
+        (trip.loadingAmount || 0) +
+        (trip.unloadingAmount || 0) +
+        (trip.driverBeta || 0) +
+        (trip.dieselAmount || 0) +
+        (trip.oilAmount || 0) +
+        (trip.fastTagAmount || 0) +
+        (trip.taxAmount || 0);
+
+      const balance = totalExpense - (trip.advanceAmount || 0);
+
+      return {
+        Date: new Date(trip.date).toLocaleDateString(),
+        Truck: trip.truck?.vehicleNumber || '',
+        Destination: trip.destination,
+        'Freight per Ton': trip.freightPerTon,
+        Freight: trip.freightAmount,
+        Loading: trip.loadingAmount,
+        Unloading: trip.unloadingAmount,
+        Beta: trip.driverBeta,
+        Diesel: trip.dieselAmount,
+        Oil: trip.oilAmount,
+        FastTag: trip.fastTagAmount,
+        Tax: trip.taxAmount,
+        Advance: trip.advanceAmount,
+        'Total Expense': totalExpense.toFixed(2),
+        Balance: balance.toFixed(2)
+      };
+    });
+
     const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Trips');
@@ -124,50 +138,66 @@ const TripList = () => {
 
       <div className='table-container'>
         <table className='modern-table'>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Truck</th>
-            <th>Destination</th>
-            <th>Freight per Ton ₹</th>
-            <th>Freight Amount ₹</th>
-            <th>Loading Amount ₹</th>
-            <th>Unloading Amount ₹</th>
-            <th>Driver Beta ₹</th>
-            <th>Diesel ₹</th>
-            <th>Oil ₹</th>
-            <th>FastTag ₹</th>
-            <th>Advance Amount ₹</th>
-            <th>Balance Amount ₹</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredTrips.map(trip => (
-            <tr key={trip._id}>
-              <td>{new Date(trip.date).toLocaleDateString()}</td>
-              <td>{trip.truck?.vehicleNumber}</td>
-              <td>{trip.destination}</td>
-              <td>{trip.freightPerTon}</td>
-              <td>{trip.freightAmount}</td>
-              <td>{trip.loadingAmount}</td>
-              <td>{trip.unloadingAmount}</td>
-              <td>{trip.driverBeta}</td>
-              <td>{trip.dieselAmount}</td>
-              <td>{trip.oilAmount}</td>
-              <td>{trip.fastTagAmount}</td>
-              <td>{trip.advanceAmount}</td>
-              <td>{trip.balanceAmount}</td>
-              <td>
-                <button onClick={() => handleEdit(trip)} className="btn edit-btn">Edit</button>
-                <button onClick={() => handleDelete(trip._id)} className="btn delete-btn">Delete</button>
-              </td>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Truck</th>
+              <th>Destination</th>
+              <th>Freight per Ton ₹</th>
+              <th>Freight Amount ₹</th>
+              <th>Loading Amount ₹</th>
+              <th>Unloading Amount ₹</th>
+              <th>Driver Beta ₹</th>
+              <th>Diesel ₹</th>
+              <th>Oil ₹</th>
+              <th>FastTag ₹</th>
+              <th>Tax ₹</th>
+              <th>Advance Amount ₹</th>
+              <th>Total Expense ₹</th>
+              <th>Balance Amount ₹</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      </div>      
-      
+          </thead>
+          <tbody>
+            {filteredTrips.map(trip => {
+              const totalExpense =
+                (trip.loadingAmount || 0) +
+                (trip.unloadingAmount || 0) +
+                (trip.driverBeta || 0) +
+                (trip.dieselAmount || 0) +
+                (trip.oilAmount || 0) +
+                (trip.fastTagAmount || 0) +
+                (trip.taxAmount || 0);
+
+              const balance = totalExpense - (trip.advanceAmount || 0);
+
+              return (
+                <tr key={trip._id}>
+                  <td>{new Date(trip.date).toLocaleDateString()}</td>
+                  <td>{trip.truck?.vehicleNumber}</td>
+                  <td>{trip.destination}</td>
+                  <td>{trip.freightPerTon}</td>
+                  <td>{trip.freightAmount}</td>
+                  <td>{trip.loadingAmount}</td>
+                  <td>{trip.unloadingAmount}</td>
+                  <td>{trip.driverBeta}</td>
+                  <td>{trip.dieselAmount}</td>
+                  <td>{trip.oilAmount}</td>
+                  <td>{trip.fastTagAmount}</td>
+                  <td>{trip.taxAmount}</td>
+                  <td>{trip.advanceAmount}</td>
+                  <td>{totalExpense.toFixed(2)}</td>
+                  <td>{balance.toFixed(2)}</td>
+                  <td>
+                    <button onClick={() => handleEdit(trip)} className="btn edit-btn">Edit</button>
+                    <button onClick={() => handleDelete(trip._id)} className="btn delete-btn">Delete</button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
